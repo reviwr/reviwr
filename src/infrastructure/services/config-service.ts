@@ -1,8 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import { ConfigPort } from "../../application/ports/config-port";
 
-export class ConfigService {
+export class ConfigService implements ConfigPort {
   private readonly configDir: string;
   private readonly credentialsPath: string;
 

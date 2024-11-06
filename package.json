@@ -16,9 +16,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@langchain/core": "^0.3.17",
     "commander": "^12.1.0",
-    "langchain": "^0.3.5",
     "simple-git": "^3.27.0"
   },
   "devDependencies": {
