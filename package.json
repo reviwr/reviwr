@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node dist/presentation/cli.js",
+    "test": "jest",
+    "dev": "ts-node src/presentation/cli.ts"
+  },
+  "bin": {
+    "rwr": "./dist/presentation/cli.js"
   },
   "keywords": [],
   "author": "",
