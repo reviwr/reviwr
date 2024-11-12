@@ -1,48 +1,57 @@
-import { Command } from "commander";
 import * as readline from "readline";
 import { ConfigService } from "../../infrastructure/services/config-service";
+import { MESSAGES } from "../../shared/messages/messages";
 
 export class ConfigCommand {
   private static configService = new ConfigService();
 
+  /**
+   * Executa o comando de configuração.
+   * @returns
+   */
   static async execute() {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });
 
-    console.log("Configuração do Reviwr CLI");
-    console.log(
-      "Para utilizar o Reviwr, você precisa de uma chave API do Google Gemini."
-    );
-    console.log(
-      "Obtenha sua chave em: https://makersuite.google.com/app/apikey\n"
-    );
+    console.log(MESSAGES.CONFIG_HEADER);
+    console.log(MESSAGES.API_KEY_PROMPT);
+    console.log(MESSAGES.API_KEY_URL);
 
-    rl.question("Digite sua chave API do Gemini: ", async (apiKey) => {
+    rl.question(MESSAGES.ENTER_API_KEY, async (apiKey) => {
       if (!apiKey.trim()) {
-        console.error("A chave API é obrigatória.");
+        console.error(MESSAGES.API_KEY_REQUIRED);
         rl.close();
         return;
       }
 
-      try {
-        await ConfigCommand.configService.saveApiKey(apiKey);
-        console.log("\nChave API salva com sucesso! ✨");
-        console.log("Você já pode começar a usar o Reviwr.");
-      } catch (error) {
-        console.error("Erro ao salvar a chave API:", error);
-      }
-      rl.close();
+      ConfigCommand.configService
+        .saveApiKey(apiKey)
+        .then(() => {
+          console.log(MESSAGES.API_KEY_SAVED);
+          console.log(MESSAGES.START_USING);
+        })
+        .catch((error) => {
+          console.error(MESSAGES.ERROR_SAVING_API_KEY, error);
+        })
+        .finally(() => {
+          rl.close();
+        });
     });
   }
 
+  /**
+   * Verifica se a configuração já foi feita.
+   * @returns
+   */
   static async checkConfig(): Promise<boolean> {
-    try {
-      return await ConfigCommand.configService.hasConfiguration();
-    } catch (error) {
-      console.error("Erro ao verificar configuração:", error);
-      return false;
-    }
+    return ConfigCommand.configService
+      .hasConfiguration()
+      .then(() => true)
+      .catch((error) => {
+        console.error(MESSAGES.ERROR_CHECKING_CONFIG, error);
+        return false;
+      });
   }
 }
